@@ -7,8 +7,10 @@ using uint = unsigned int;
 int ask_mode() {
     while (true) {
         std::cout << "What do you whant to do?\n";
-        std::cout << "\t0)exit 1)regex to determined\n";
-//        std::cout <<"\t2)undetermined to determined\n";
+        std::cout << "\t0)exit\n";
+        std::cout << "\t1)regex to minimal determined\n";
+        std::cout << "\t2)regex to minimal full determined\n";
+//        std::cout << "\t3)undetermined to determined\n";
         std::cout << "enter number\n";
         int command = 0;
         std::cin >> command;
@@ -23,10 +25,13 @@ int ask_mode() {
     }
 }
 
-void regexToDetermined() {
-    std::string regex;
-    std::cin >> regex;
-    auto machine = fromPoland(regex).determine().minimise();
+void regexToDetermined(const std::string &regex, const std::vector<char> &alphabet = std::vector<char>()) {
+    auto machine = fromPoland(regex).determine();
+    if(alphabet.empty()) {
+        machine = machine.minimise();
+    } else {
+        machine = machine.makeFull(alphabet).minimise();
+    }
     std::cout << machine;
 }
 
@@ -34,12 +39,26 @@ int runCommand(uint command) {
     switch (command) {
         case 0:
             return 1;
-        case 1:
+        case 1: {
             std::cout << "enter regex in Polish notation\n";
-            regexToDetermined();
+            std::string regex;
+            std::cin >> regex;
+            regexToDetermined(regex);
             break;
-//        case 2:
-
+        }
+        case 2:
+            std::cout << "enter regex in Polish notation\n";
+            std::string regex;
+            std::cin >> regex;
+            std::cout << "enter alphabet whithout whitespaces\n";
+            std::string alphabets;
+            std::cin >> alphabets;
+            std::vector<char> alphabet(alphabets.size());
+            for(int i = 0; i < alphabet.size(); ++ i) {
+                alphabet[i] = alphabets[i];
+            }
+            regexToDetermined(regex, alphabet);
+            break;
     }
     return 0;
 }

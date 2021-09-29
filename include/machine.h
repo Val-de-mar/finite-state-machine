@@ -32,11 +32,15 @@ public:
 
     void setTrans(uint from, uint to, Sigma sign);
 
+    void makeTerminal(uint vert);
+
     bool operator==(const DetMachine &other) const;
 
     DetMachine minimise();
 
     bool check(const std::basic_string<Sigma> &str);
+
+    DetMachine& makeFull(const std::vector<Sigma> &alphabet);
 
     template<class Sigmat>
     friend std::ostream &operator<<(std::ostream &output, const DetMachine<Sigmat> &value);
@@ -103,9 +107,9 @@ public:
 
     bool operator==(const Machine &other) const;
 
-    uint add_cond();
+    uint addCond();
 
-    void add_trans(uint from, uint to, Sigma sign);
+    void addTrans(uint from, uint to, Sigma sign);
 
     void makeTerminal(uint cond);
 

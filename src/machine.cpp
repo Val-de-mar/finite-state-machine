@@ -8,6 +8,7 @@
 template<typename Sigma>
 uint DetMachine<Sigma>::addCond() {
     all.emplace_back();
+    is_terminal.push_back(false);
     return all.size() - 1;
 }
 
@@ -19,6 +20,11 @@ DetMachine<Sigma>::DetMachine(uint size) : all(size ? size : 1), is_terminal(siz
 template<typename Sigma>
 void DetMachine<Sigma>::setTrans(uint from, uint to, Sigma sign) {
     all[from][sign] = to;
+}
+
+template<typename Sigma>
+void DetMachine<Sigma>::makeTerminal(uint vert) {
+    is_terminal[vert] = true;
 }
 
 template<typename Sigma>
@@ -105,6 +111,29 @@ bool DetMachine<Sigma>::check(const std::basic_string<Sigma> &str) {
     return is_terminal[cond];
 }
 
+template<typename Sigma>
+DetMachine<Sigma>& DetMachine<Sigma>::makeFull(const std::vector<Sigma> &alphabet) {
+    bool flag = false;
+    for (int i = 0; i < all.size(); ++i) {
+        for (int j = 0; j < alphabet.size(); ++j) {
+            auto pl = all[i].find(alphabet[j]);
+            if (pl == all[i].end()) {
+                all[i][alphabet[j]] = all.size();
+                flag = true;
+            }
+        }
+    }
+    if (flag) {
+        addCond();
+        for(int j = 0; j < alphabet.size(); ++j) {
+            all.back()[alphabet[j]]=all.size() - 1;
+        }
+    }
+    return *this;
+}
+
+
+
 template<typename Sigmat>
 std::ostream &operator<<(std::ostream &output, const DetMachine<Sigmat> &value) {
     output << std::string("size is ") << std::to_string(value.all.size()) << std::string("\n");
@@ -171,7 +200,7 @@ void Machine<Sigma>::TokenDfs(std::vector<TokenVertex> &null_part, uint cur, uin
 template<typename Sigma>
 void Machine<Sigma>::pushFront() {
     all.insert(all.begin(), Condition());
-    add_trans(0, 1, Sigma(0));
+    addTrans(0, 1, Sigma(0));
     for (int i = 1; i < all.size(); ++i) {
         for (auto &j: all[i].data) {
             std::set<uint> snew;
@@ -205,7 +234,7 @@ template<typename Sigma>
 void Machine<Sigma>::uniqueExit(uint l, uint r, uint exit) {
     for (uint i = l; i < r; ++i) {
         if (all[i].is_terminal) {
-            add_trans(i, exit, Sigma(0));
+            addTrans(i, exit, Sigma(0));
             all[i].is_terminal = false;
         }
     }
@@ -269,7 +298,7 @@ Machine<Sigma>::Machine(uint size) : all(size ? size : 1) {
 
 template<typename Sigma>
 Machine<Sigma>::Machine(Sigma sign) : all(2) {
-    add_trans(0, 1, sign);
+    addTrans(0, 1, sign);
     makeTerminal(1);
 }
 
@@ -291,13 +320,13 @@ bool Machine<Sigma>::operator==(const Machine &other) const {
 }
 
 template<typename Sigma>
-uint Machine<Sigma>::add_cond() {
+uint Machine<Sigma>::addCond() {
     all.emplace_back();
     return all.size() - 1;
 }
 
 template<typename Sigma>
-void Machine<Sigma>::add_trans(uint from, uint to, Sigma sign) {
+void Machine<Sigma>::addTrans(uint from, uint to, Sigma sign) {
     all[from][sign].insert(to);
 }
 
@@ -341,7 +370,7 @@ Machine<Sigma> Machine<Sigma>::ridOfEpsilon() {
                 for (auto &edges: ans.all[i].data) {
                     if (edges.first != Sigma(0)) {
                         for (auto &dest: edges.second) {
-                            ans.add_trans(token, dest, edges.first);
+                            ans.addTrans(token, dest, edges.first);
                         }
                     }
                 }
@@ -360,12 +389,12 @@ DetMachine<Sigma> Machine<Sigma>::determine() {
 template<typename Sigma>
 Machine<Sigma> &Machine<Sigma>::operator+=(const Machine<Sigma> &other) {
     pushFront();
-    add_trans(0, all.size(), Sigma(0));
+    addTrans(0, all.size(), Sigma(0));
     merge(other);
     uniqueExit(0, all.size(), all.size());
 //        for (uint i = 0; i < all.size(); ++i) {
 //            if(all[i].is_terminal) {
-//                add_trans(i, all.size(), Sigma(0));
+//                addTrans(i, all.size(), Sigma(0));
 //                all[i].is_terminal = false;
 //            }
 //        }
@@ -381,7 +410,7 @@ Machine<Sigma> &Machine<Sigma>::operator*=(const Machine<Sigma> &other) {
     uniqueExit(0, size, size);
 //        for (uint i = 0; i < size; ++i) {
 //            if(all[i].is_terminal) {
-//                add_trans(i, size, Sigma(0));
+//                addTrans(i, size, Sigma(0));
 //                all[i].is_terminal = false;
 //            }
 //        }
