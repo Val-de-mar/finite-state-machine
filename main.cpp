@@ -17,7 +17,7 @@ int ask_mode() {
         switch (command) {
             case 0:
             case 1:
-//            case 2:
+            case 2:
                 return command;
             default:
                 continue;
