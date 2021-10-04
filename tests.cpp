@@ -78,26 +78,19 @@ TEST(QuickTest, MinimiseTest)
 
     ASSERT_FALSE(pre == res);
 
-    ASSERT_FALSE(res.check("baaababaaabbaabaabbbabbbabaa"));
-    ASSERT_FALSE(res.check("ababbbbbabaabaaabba"));
-    ASSERT_TRUE(res.check("aabbbbaaaaabaabababaababbaba"));
-    ASSERT_TRUE(res.check("bbbabbabababbaababaaaaabbb"));
-    ASSERT_FALSE(res.check("abbbaaabbbbbaabbbaabbbbbaabab"));
-    ASSERT_FALSE(res.check("bbaabaababaabbaababaaababaaba"));
-    ASSERT_FALSE(res.check("bbbabaabbbbbbbaaababaaa"));
-    ASSERT_TRUE(res.check("aaabbbababaaaaab"));
-    ASSERT_FALSE(res.check("bababbbbbbaaabbababbaabbbaa"));
-    ASSERT_TRUE(res.check("baabbbababaababbbbbbba"));
-    ASSERT_FALSE(res.check("abbbbaababbbbaaabbbbbbbbb"));
-    ASSERT_FALSE(res.check("ababaaabbaabbaabbbbaaabbba"));
-    ASSERT_FALSE(res.check("aabaaabaaaabaababbbababaaba"));
-    ASSERT_FALSE(res.check("aabababaaaaabbbaababab"));
-    ASSERT_TRUE(res.check("bbaababababbbbaabbabaaaa"));
-    ASSERT_FALSE(res.check("abaababbaaaaaaba"));
-    ASSERT_FALSE(res.check("baabbbbabaabbbabbaaaabbaa"));
-    ASSERT_FALSE(res.check("bbaabbbbabbaaaabaaabbbaba"));
-    ASSERT_FALSE(res.check("abaabbabbabbabaababaa"));
-    ASSERT_FALSE(res.check("bbabbaabaaaaabaabababbaaaab"));
+    DetMachine<char> machine(4u);
+    machine.setTransition(0, 2, 'a');
+    machine.setTransition(0, 1, 'b');
+    machine.setTransition(1, 3, 'a');
+    machine.setTransition(1, 0, 'b');
+    machine.setTransition(2, 0, 'a');
+    machine.setTransition(2, 3, 'b');
+    machine.setTransition(3, 1, 'a');
+    machine.setTransition(3, 2, 'b');
+
+    machine.makeTerminal(0);
+
+    ASSERT_TRUE(res == machine);
 }
 
 TEST(QuickTest, NonExistantEdgeTest) {
@@ -112,24 +105,24 @@ TEST(QuickTest, MakeFullTest) {
     auto res = pre.minimise().makeFull(std::vector<char>{'a', 'b', 'c'});
 
     DetMachine<char> machine(5u);
-    machine.setTrans(0, 2, 'a');
-    machine.setTrans(0, 1, 'b');
-    machine.setTrans(1, 3, 'a');
-    machine.setTrans(1, 0, 'b');
-    machine.setTrans(2, 0, 'a');
-    machine.setTrans(2, 3, 'b');
-    machine.setTrans(3, 1, 'a');
-    machine.setTrans(3, 2, 'b');
-    
-    machine.setTrans(0, 4, 'c');
-    machine.setTrans(1, 4, 'c');
-    machine.setTrans(2, 4, 'c');
-    machine.setTrans(3, 4, 'c');
-    machine.setTrans(4, 4, 'a');
-    machine.setTrans(4, 4, 'b');
-    machine.setTrans(4, 4, 'c');
-    
-    machine.makeTerminal(0); 
+    machine.setTransition(0, 2, 'a');
+    machine.setTransition(0, 1, 'b');
+    machine.setTransition(1, 3, 'a');
+    machine.setTransition(1, 0, 'b');
+    machine.setTransition(2, 0, 'a');
+    machine.setTransition(2, 3, 'b');
+    machine.setTransition(3, 1, 'a');
+    machine.setTransition(3, 2, 'b');
+
+    machine.setTransition(0, 4, 'c');
+    machine.setTransition(1, 4, 'c');
+    machine.setTransition(2, 4, 'c');
+    machine.setTransition(3, 4, 'c');
+    machine.setTransition(4, 4, 'a');
+    machine.setTransition(4, 4, 'b');
+    machine.setTransition(4, 4, 'c');
+
+    machine.makeTerminal(0);
 
     ASSERT_TRUE(machine == res);
     ASSERT_FALSE(pre == res);

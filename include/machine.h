@@ -13,47 +13,19 @@
 #include <stack>
 #include <algorithm>
 
+#include "DetMachine.h"
+
 using uint = unsigned int;
 
-template<typename Sigma>
-class Machine;
 
-template<typename Sigma>
-class DetMachine {
-    std::vector<std::map<Sigma, uint>> all;
-    std::vector<bool> is_terminal;
-
-    friend class Machine<Sigma>;
-
-public:
-    DetMachine(uint size = 1);
-
-    uint addCond();
-
-    void setTrans(uint from, uint to, Sigma sign);
-
-    void makeTerminal(uint vert);
-
-    bool operator==(const DetMachine &other) const;
-
-    DetMachine minimise();
-
-    bool check(const std::basic_string<Sigma> &str);
-
-    DetMachine& makeFull(const std::vector<Sigma> &alphabet);
-
-    template<class Sigmat>
-    friend std::ostream &operator<<(std::ostream &output, const DetMachine<Sigmat> &value);
-};
-
-template<typename Sigma>
+template<typename Alphabet>
 class Machine {
 
     class Condition {
-        std::map<Sigma, std::set<uint>> data;
+        std::map<Alphabet, std::set<uint>> data;
         bool is_terminal = false;
     public:
-        auto &operator[](const Sigma &sign);
+        auto &operator[](const Alphabet &sign);
 
         bool operator==(const Condition &other) const;
 
@@ -63,7 +35,7 @@ class Machine {
 
         [[nodiscard]] bool isTerminal() const;
 
-        friend class Machine<Sigma>;
+        friend class Machine<Alphabet>;
     };
 
     struct TokenVertex {
@@ -77,7 +49,7 @@ class Machine {
         bool is_grey = false;
         bool is_terminal = false;
 
-        auto &operator[](const Sigma &sign);
+        auto &operator[](const Alphabet &sign);
     };
 
     void EpsilonDfs(std::vector<VertexDfs> &rev_null, uint cur);
@@ -86,46 +58,51 @@ class Machine {
 
     std::vector<Condition> all;
 
-    void pushFront();
+    void stretchInitialCondition();
 
     void merge(const Machine &other);
 
     void uniqueExit(uint l, uint r, uint exit);
 
-    DetMachine<Sigma> determineEpsilonFree();
+    std::map<Alphabet, std::vector<bool>>
+    detMachineConditionProcessing(std::map<std::vector<bool>, uint> &mask_to_set_number,
+                                  std::vector<std::vector<bool>> &set_number_to_mask, uint vert);
+
+    DetMachine<Alphabet> determineEpsilonFree();
+
+    void tokenPushThrough(TokenVertex& token_vertex, Condition& token_carrier, Machine<Alphabet>& editable_machine);
 
 public:
     Machine(uint size = 1);
 
-    Machine(Sigma sign);
+    Machine(Alphabet sign);
 
-    Machine(const Machine<Sigma> &other) = default;
+    Machine(const Machine<Alphabet> &other) = default;
 
-    Machine(Machine<Sigma> &&other) = default;
+    Machine(Machine<Alphabet> &&other) = default;
 
-    Machine &operator=(const Machine<Sigma> &other);
+    Machine &operator=(const Machine<Alphabet> &other);
 
     bool operator==(const Machine &other) const;
 
     uint addCond();
 
-    void addTrans(uint from, uint to, Sigma sign);
+    void addTrans(uint from, uint to, Alphabet sign);
 
     void makeTerminal(uint cond);
 
     Machine ridOfEpsilon();
 
-    DetMachine<Sigma> determine();
+    DetMachine<Alphabet> determine();
 
-    Machine &operator+=(const Machine<Sigma> &other);
+    Machine &operator+=(const Machine<Alphabet> &other);
 
-    Machine &operator*=(const Machine<Sigma> &other);
+    Machine &operator*=(const Machine<Alphabet> &other);
 
     Machine &kleene();
 
 
 };
-
 
 
 #endif //MACHINE_MACHINE_H

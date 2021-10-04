@@ -15,7 +15,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_library(machine STATIC ${CMAKE_SOURCE_DIR}/src/machine.cpp)
+add_library(machine STATIC ${CMAKE_SOURCE_DIR}/src/machine.cpp ${CMAKE_SOURCE_DIR}/src/DetMachine.cpp)
 target_include_directories(machine PUBLIC "${CMAKE_SOURCE_DIR}/include")
 
 add_executable(program main.cpp)
@@ -43,6 +43,13 @@ add_custom_target(coverage_machine_gen
     COMMAND cp ./machine*.gcov ../../../coverage
     )
 
+add_custom_target(coverage_det_machine_gen
+    DEPENDS testrun
+    WORKING_DIRECTORY "CMakeFiles/machine.dir/src"
+    COMMAND gcov -c -b DetMachine.cpp.
+    COMMAND cp ./DetMachine*.gcov ../../../coverage
+    )
+
 add_custom_target(coverage_polish_gen
     DEPENDS testrun
     WORKING_DIRECTORY "CMakeFiles/machine_test.dir"
@@ -51,5 +58,5 @@ add_custom_target(coverage_polish_gen
     )
 
 add_custom_target(converage ALL
-    DEPENDS coverage_polish_gen coverage_machine_gen
+    DEPENDS coverage_polish_gen coverage_machine_gen coverage_det_machine_gen
     )
