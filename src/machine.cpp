@@ -52,7 +52,7 @@ void Machine<Alphabet>::TokenDfs(std::vector<TokenVertex> &null_part, uint cur, 
 template<typename Alphabet>
 void Machine<Alphabet>::stretchInitialCondition() {
     all.insert(all.begin(), Condition());
-    addTrans(0, 1, Alphabet(0));
+    addTransition(0, 1, Alphabet(0));
     for (int i = 1; i < all.size(); ++i) {
         for (auto &condition: all[i].conditions) {
             std::set<uint> shifted_edges;
@@ -86,7 +86,7 @@ template<typename Alphabet>
 void Machine<Alphabet>::uniqueExit(uint l, uint r, uint exit) {
     for (uint i = l; i < r; ++i) {
         if (all[i].is_terminal) {
-            addTrans(i, exit, Alphabet(0));
+            addTransition(i, exit, Alphabet(0));
             all[i].is_terminal = false;
         }
     }
@@ -158,7 +158,7 @@ Machine<Alphabet>::Machine(uint size) : all(size ? size : 1) {
 
 template<typename Alphabet>
 Machine<Alphabet>::Machine(Alphabet sign) : all(2) {
-    addTrans(0, 1, sign);
+    addTransition(0, 1, sign);
     makeTerminal(1);
 }
 
@@ -174,13 +174,13 @@ bool Machine<Alphabet>::operator==(const Machine &other) const {
 }
 
 template<typename Alphabet>
-uint Machine<Alphabet>::addCond() {
+uint Machine<Alphabet>::addCondition() {
     all.emplace_back();
     return all.size() - 1;
 }
 
 template<typename Alphabet>
-void Machine<Alphabet>::addTrans(uint from, uint to, Alphabet sign) {
+void Machine<Alphabet>::addTransition(uint from, uint to, Alphabet sign) {
     all[from][sign].insert(to);
 }
 
@@ -196,7 +196,7 @@ void Machine<Alphabet>::tokenPushThrough(TokenVertex &token_vertex, Condition &t
         for (auto &edges: token_carrier.conditions) {
             if (edges.first != Alphabet(0)) {
                 for (auto &dest: edges.second) {
-                    editable_machine.addTrans(token, dest, edges.first);
+                    editable_machine.addTransition(token, dest, edges.first);
                 }
             }
         }
@@ -250,7 +250,7 @@ DetMachine<Alphabet> Machine<Alphabet>::determine() {
 template<typename Alphabet>
 Machine<Alphabet> &Machine<Alphabet>::operator+=(const Machine<Alphabet> &other) {
     stretchInitialCondition();
-    addTrans(0, all.size(), Alphabet(0));
+    addTransition(0, all.size(), Alphabet(0));
     merge(other);
     uniqueExit(0, all.size(), all.size());
     all.emplace_back();

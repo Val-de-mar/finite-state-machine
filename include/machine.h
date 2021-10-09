@@ -85,9 +85,9 @@ public:
 
     bool operator==(const Machine &other) const;
 
-    uint addCond();
+    uint addCondition();
 
-    void addTrans(uint from, uint to, Alphabet sign);
+    void addTransition(uint from, uint to, Alphabet sign);
 
     void makeTerminal(uint cond);
 
