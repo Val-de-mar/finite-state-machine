@@ -16,7 +16,7 @@ class Machine;
 
 template<typename Alphabet>
 class DetMachine {
-    std::vector<std::map<Alphabet, uint>> all;
+    std::vector<std::map<Alphabet, uint>> conditions;
     std::vector<bool> is_terminal;
 
     friend class Machine<Alphabet>;

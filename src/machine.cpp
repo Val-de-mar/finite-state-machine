@@ -7,17 +7,17 @@
 
 template<typename Alphabet>
 auto &Machine<Alphabet>::Condition::operator[](const Alphabet &sign) {
-    return data[sign];
+    return conditions[sign];
 }
 
 template<typename Alphabet>
 bool Machine<Alphabet>::Condition::operator==(const Machine::Condition &other) const {
-    return data == other.data && is_terminal == other.is_terminal;
+    return conditions == other.conditions && is_terminal == other.is_terminal;
 }
 
 template<typename Alphabet>
 bool Machine<Alphabet>::Condition::operator!=(const Machine::Condition &other) const {
-    return !(data == other.data);
+    return !(conditions == other.conditions);
 }
 
 template<typename Alphabet>
@@ -54,12 +54,12 @@ void Machine<Alphabet>::stretchInitialCondition() {
     all.insert(all.begin(), Condition());
     addTrans(0, 1, Alphabet(0));
     for (int i = 1; i < all.size(); ++i) {
-        for (auto &j: all[i].data) {
+        for (auto &condition: all[i].conditions) {
             std::set<uint> shifted_edges;
-            for (auto &k: j.second) {
+            for (auto &k: condition.second) {
                 shifted_edges.insert(k + 1);
             }
-            j.second = std::move(shifted_edges);
+            condition.second = std::move(shifted_edges);
         }
     }
 }
@@ -72,12 +72,12 @@ void Machine<Alphabet>::merge(const Machine &other) {
         all[i] = other.all[i - size];
     }
     for (int i = size; i < all.size(); ++i) {
-        for (auto &j: all[i].data) {
+        for (auto &condition: all[i].conditions) {
             std::set<uint> snew;
-            for (auto &k: j.second) {
-                snew.insert(k + size);
+            for (auto &edge: condition.second) {
+                snew.insert(edge + size);
             }
-            j.second = std::move(snew);
+            condition.second = std::move(snew);
         }
     }
 }
@@ -103,7 +103,7 @@ Machine<Alphabet>::detMachineConditionProcessing(std::map<std::vector<bool>, uin
         if (!mask[i]) {
             continue;
         }
-        for (auto &edge: all[i].data) {
+        for (auto &edge: all[i].conditions) {
             for (auto &dest: edge.second) {
                 next[edge.first].resize(all.size(), false);
                 next[edge.first][dest] = true;
@@ -139,11 +139,11 @@ DetMachine<Alphabet> Machine<Alphabet>::determineEpsilonFree() {
                 ans.addCondition();
             }
             uint num = mask_to_set_number[i.second];
-            ans.all[vert][i.first] = num;
+            ans.conditions[vert][i.first] = num;
         }
     }
     ans.is_terminal.resize(set_number_to_mask.size());
-    for (int i = 0; i < ans.all.size(); ++i) {
+    for (int i = 0; i < ans.conditions.size(); ++i) {
         for (int j = 0; j < all.size(); ++j) {
             if (set_number_to_mask[i][j] && all[j].is_terminal) ans.is_terminal[i] = true;
         }
@@ -193,7 +193,7 @@ template<typename Alphabet>
 void Machine<Alphabet>::tokenPushThrough(TokenVertex &token_vertex, Condition &token_carrier,
                                          Machine<Alphabet> &editable_machine) {
     for (auto &token: token_vertex.tokens) {
-        for (auto &edges: token_carrier.data) {
+        for (auto &edges: token_carrier.conditions) {
             if (edges.first != Alphabet(0)) {
                 for (auto &dest: edges.second) {
                     editable_machine.addTrans(token, dest, edges.first);
@@ -212,12 +212,12 @@ Machine<Alphabet> Machine<Alphabet>::ridOfEpsilon() {
         std::vector<TokenVertex> null_part(all.size());
         for (int i = 0; i < all.size(); ++i) {
             rev_null[i].is_terminal = all[i].is_terminal;
-            for (auto &j: all[i].data) {
-                if (j.first != Alphabet(0)) {
-                    ans.all[i].data.insert(j);
+            for (auto &condition: all[i].conditions) {
+                if (condition.first != Alphabet(0)) {
+                    ans.all[i].conditions.insert(condition);
                     continue;
                 }
-                for (auto k: j.second) {
+                for (auto k: condition.second) {
                     null_part[i].edges.push_back(k);
                     rev_null[k].edges.push_back(i);
                 }

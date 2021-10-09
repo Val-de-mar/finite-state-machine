@@ -22,7 +22,7 @@ template<typename Alphabet>
 class Machine {
 
     class Condition {
-        std::map<Alphabet, std::set<uint>> data;
+        std::map<Alphabet, std::set<uint>> conditions;
         bool is_terminal = false;
     public:
         auto &operator[](const Alphabet &sign);
@@ -31,7 +31,7 @@ class Machine {
 
         bool operator!=(const Condition &other) const;
 
-        Condition() : data() {}
+        Condition() : conditions() {}
 
         [[nodiscard]] bool isTerminal() const;
 
