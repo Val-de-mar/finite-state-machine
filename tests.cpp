@@ -47,26 +47,26 @@ TEST(QuickTest, EqualityTest) {
 TEST(QuickTest, RidOfEpsilonAndEq)
 {
     Machine<char> machine(5u);
-    machine.addTrans(0, 1, 'a');
-    machine.addTrans(0, 3, 'b');
-    machine.addTrans(3, 1, 'a');
-    machine.addTrans(3, 2, char(0));
-    machine.addTrans(3, 4, char(0));
-    machine.addTrans(1, 2, 'b');
-    machine.addTrans(2, 4, 'a');
+    machine.addTransition(0, 1, 'a');
+    machine.addTransition(0, 3, 'b');
+    machine.addTransition(3, 1, 'a');
+    machine.addTransition(3, 2, char(0));
+    machine.addTransition(3, 4, char(0));
+    machine.addTransition(1, 2, 'b');
+    machine.addTransition(2, 4, 'a');
     machine.makeTerminal(4);
     auto res = machine.ridOfEpsilon();
     Machine<char> ans(5u);
-    ans.addTrans(0, 1, 'a');
-    ans.addTrans(0, 3, 'b');
-    ans.addTrans(3, 1, 'a');
-    ans.addTrans(3, 4, 'a');
-    ans.addTrans(1, 2, 'b');
-    ans.addTrans(2, 4, 'a');
+    ans.addTransition(0, 1, 'a');
+    ans.addTransition(0, 3, 'b');
+    ans.addTransition(3, 1, 'a');
+    ans.addTransition(3, 4, 'a');
+    ans.addTransition(1, 2, 'b');
+    ans.addTransition(2, 4, 'a');
     ans.makeTerminal(4);
     ans.makeTerminal(3);
     ASSERT_TRUE(ans == res);
-    ans.addCond();
+    ans.addCondition();
     ASSERT_FALSE(ans == res);
 }
 

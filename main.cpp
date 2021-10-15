@@ -50,6 +50,11 @@ int runCommand(uint command) {
             std::cout << "enter regex in Polish notation\n";
             std::string regex;
             std::cin >> regex;
+            for (char& sign:regex) {
+                if (sign == '0') {
+                    sign = 0;
+                }
+            }
             std::cout << "enter alphabet whithout whitespaces\n";
             std::string alphabets;
             std::cin >> alphabets;
