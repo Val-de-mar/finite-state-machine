@@ -155,6 +155,21 @@ std::ostream &operator<<(std::ostream &output, const DetMachine<AlphabetT> &valu
     return output;
 }
 
+template<typename Alphabet>
+size_t DetMachine<Alphabet>::size() const {
+    return conditions.size();
+}
+
+template<typename Alphabet>
+const std::map<Alphabet, uint> &DetMachine<Alphabet>::operator[](uint condition) const {
+    return conditions[condition];
+}
+
+template<typename Alphabet>
+bool DetMachine<Alphabet>::isTerminal(uint condition) const {
+    return is_terminal[condition];
+}
+
 
 template
 class DetMachine<char>;

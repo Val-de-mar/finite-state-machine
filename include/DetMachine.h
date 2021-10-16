@@ -40,6 +40,10 @@ public:
 
     DetMachine &makeFull(const std::vector<Alphabet> &alphabet);
 
+    [[nodiscard]] size_t size() const;
+    const std::map<Alphabet, uint>& operator [] (uint condition) const;
+    bool isTerminal(uint condition) const;
+
     template<class AlphabetT>
     friend std::ostream &operator<<(std::ostream &output, const DetMachine<AlphabetT> &value);
 };

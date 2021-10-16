@@ -22,7 +22,7 @@ template<typename Alphabet>
 class Machine {
 
     class Condition {
-        std::map<Alphabet, std::set<uint>> conditions;
+        std::map<Alphabet, std::set<uint>> edges;
         bool is_terminal = false;
     public:
         auto &operator[](const Alphabet &sign);
@@ -31,7 +31,7 @@ class Machine {
 
         bool operator!=(const Condition &other) const;
 
-        Condition() : conditions() {}
+        Condition() : edges() {}
 
         [[nodiscard]] bool isTerminal() const;
 
@@ -56,8 +56,6 @@ class Machine {
 
     void TokenDfs(std::vector<TokenVertex> &null_part, uint cur, uint token);
 
-    std::vector<Condition> all;
-
     void stretchInitialCondition();
 
     void merge(const Machine &other);
@@ -72,6 +70,9 @@ class Machine {
 
     void tokenPushThrough(TokenVertex& token_vertex, Condition& token_carrier, Machine<Alphabet>& editable_machine);
 
+
+    std::vector<Condition> conditions;
+
 public:
     Machine(uint size = 1);
 
@@ -80,6 +81,8 @@ public:
     Machine(const Machine<Alphabet> &other) = default;
 
     Machine(Machine<Alphabet> &&other) = default;
+
+    Machine(const DetMachine<Alphabet> &other);
 
     Machine &operator=(const Machine<Alphabet> &other);
 
@@ -101,7 +104,7 @@ public:
 
     Machine &kleene();
 
-
+    Machine reversed();
 };
 
 
