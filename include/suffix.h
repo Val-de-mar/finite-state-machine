@@ -39,7 +39,10 @@ std::vector<char> getAlphabet(const StringT &... regexes) {
 
 
 
-size_t longestPrefix(const std::string &regex, const std::string &word);
+size_t longestPrefixPolish(const std::string &regex, const std::string &word);
+size_t longestPrefixReversedPolish(const std::string &regex, const std::string &word);
 
 
-size_t longestSuffix(const std::string &regex, const std::string &word);
+size_t longestSuffixPolish(const std::string &regex, const std::string &word);
+size_t longestSuffixReversedPolish(const std::string &regex, const std::string &word);
+

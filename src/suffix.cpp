@@ -53,7 +53,7 @@ std::vector<bool> nonDeadlockConditions(const DetMachine<char> &machine) {
 }
 
 
-size_t longestPrefix(const std::string &regex, const std::string &word) {
+size_t longestPrefixPolish(const std::string &regex, const std::string &word) {
     auto alphabet = getAlphabet(regex);
     DetMachine<char> machine = Machine<char>(fromPoland(regex)).determine().makeFull(alphabet).minimise();
     auto non_deadlock = nonDeadlockConditions(machine);
@@ -72,10 +72,26 @@ size_t longestPrefix(const std::string &regex, const std::string &word) {
     return i;
 }
 
-size_t longestSuffix(const std::string &regex, const std::string &word) {
+size_t longestPrefixReversedPolish(const std::string &regex, const std::string &word) {
+    RegexTree tree(Notation<reversed_polish>{regex});
+    auto actual_regex = tree.getRegexPolish();
+    return longestPrefixPolish(actual_regex, word);
+}
+
+size_t longestSuffixReversedPolish(const std::string &regex, const std::string &word) {
+    RegexTree tree(Notation<reversed_polish>{regex});
+    auto actual_regex = tree.getReversedRegexPolish();
+    auto reversed_word = word;
+    std::reverse(reversed_word.begin(), reversed_word.end());
+    return longestPrefixPolish(actual_regex, reversed_word);
+}
+
+
+
+size_t longestSuffixPolish(const std::string &regex, const std::string &word) {
     RegexTree tree(Notation<polish>{regex});
     auto actual_regex = tree.getReversedRegexPolish();
     auto reversed_word = word;
     std::reverse(reversed_word.begin(), reversed_word.end());
-    return longestPrefix(actual_regex, reversed_word);
+    return longestPrefixPolish(actual_regex, reversed_word);
 }

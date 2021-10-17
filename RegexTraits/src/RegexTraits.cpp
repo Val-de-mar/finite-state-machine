@@ -8,14 +8,11 @@ RegexTree::RegexTree(Notation<reversed_polish> notation) {
     const std::string &regex = notation.regex;
     std::stack<RegexVertex *> buffer;
     for (char sign: regex) {
-        if (sign >= 'a' && sign <= 'z') {
-            vertexes.push_back(new RegexLetter(sign));
-            buffer.push(vertexes.back());
-        } else if (sign == '*') {
+        if (sign == '*') {
             vertexes.push_back(new RegexUnaryOperation(buffer.top(), sign));
             root = vertexes.back();
             buffer.top() = root;
-        } else {
+        } else if (sign == '.' || sign == '+'){
             auto &right = buffer.top();
             buffer.pop();
             auto &left = buffer.top();
@@ -23,6 +20,9 @@ RegexTree::RegexTree(Notation<reversed_polish> notation) {
             vertexes.push_back(new RegexBinaryOperation(left, right, sign));
             root = vertexes.back();
             buffer.push(root);
+        } else {
+            vertexes.push_back(new RegexLetter(sign));
+            buffer.push(vertexes.back());
         }
     }
 }
@@ -41,7 +41,17 @@ RegexTree::RegexTree(Notation<polish> notation) {
     std::stack<size_t> fullness;
     RegexLetter *free_letter;
     for (char sign: regex) {
-        if (sign >= 'a' && sign <= 'z') {
+        if (sign == '*') {
+            RegexOperation *new_vertex = new RegexUnaryOperation(sign);
+            vertexes.push_back(new_vertex);
+            operators_buffer.push(new_vertex);
+            fullness.push(0);
+        } else if (sign == '.' || sign == '+'){
+            RegexOperation *new_vertex = new RegexBinaryOperation(sign);
+            vertexes.push_back(new_vertex);
+            operators_buffer.push(new_vertex);
+            fullness.push(0);
+        } else {
             vertexes.push_back(new RegexLetter(sign));
             (*operators_buffer.top())[fullness.top()] = vertexes.back();
             ++fullness.top();
@@ -56,18 +66,11 @@ RegexTree::RegexTree(Notation<polish> notation) {
                 (*operators_buffer.top())[fullness.top()] = vertex;
                 ++fullness.top();
             }
-        } else if (sign == '*') {
-            RegexOperation *new_vertex = new RegexUnaryOperation(sign);
-            vertexes.push_back(new_vertex);
-            operators_buffer.push(new_vertex);
-            fullness.push(0);
-        } else {
-            RegexOperation *new_vertex = new RegexBinaryOperation(sign);
-            vertexes.push_back(new_vertex);
-            operators_buffer.push(new_vertex);
-            fullness.push(0);
         }
     }
+    int x;
+    x = 1;
+
 }
 
 
