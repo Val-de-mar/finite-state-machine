@@ -5,7 +5,7 @@
 #ifndef MACHINE_POLAND_H
 #define MACHINE_POLAND_H
 
-#include "machine.h"
+#include "../Machine/include/machine.h"
 
 
 std::pair<Machine<char>, uint> fromPolandH(const std::string &regex, uint l = 0) {

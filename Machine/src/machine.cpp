@@ -2,7 +2,7 @@
 // Created by val-de-mar on 20/9/21.
 //
 
-#include "machine.h"
+#include "../include/machine.h"
 
 
 template<typename Alphabet>

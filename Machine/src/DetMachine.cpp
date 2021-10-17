@@ -2,7 +2,7 @@
 // Created by val-de-mar on 4/10/21.
 //
 
-#include "DetMachine.h"
+#include "../include/DetMachine.h"
 template<typename Alphabet>
 uint DetMachine<Alphabet>::addCondition() {
     conditions.emplace_back();
