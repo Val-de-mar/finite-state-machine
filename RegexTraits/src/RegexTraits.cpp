@@ -68,9 +68,6 @@ RegexTree::RegexTree(Notation<polish> notation) {
             }
         }
     }
-    int x;
-    x = 1;
-
 }
 
 
